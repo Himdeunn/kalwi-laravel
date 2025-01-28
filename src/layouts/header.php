@@ -16,4 +16,4 @@
     </style>
 </head>
 
-<body class="bg-[url('./src/assets/img/bg/bg-3.jpg')] bg-backdrop-blur bg-opacity-50 bg-cover bg-fixed bg-center">
+<body class="bg-[url('./src/assets/img/bg/bg-5.jpg')] bg-backdrop-blur bg-opacity-50 bg-cover bg-fixed bg-center">

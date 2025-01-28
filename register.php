@@ -2,6 +2,9 @@
 session_start();
 $pageTitle = "Kalwi | Register";
 
+// Pastikan tidak ada output sebelum memulai session dan pengolahan header
+ob_start();
+
 include './src/layouts/header.php';
 include './src/layouts/footer.php';
 include './src/layouts/navbar.php';
@@ -47,8 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_id'] = $conn->insert_id;  // Simpan user_id di session
                 $_SESSION['user_type'] = 1;  // Set user type menjadi 1 (biasa)
 
-                // Redirect ke halaman login atau dashboard setelah sukses
-                ob_start();
+                // Redirect ke halaman login setelah sukses
                 header("Location: login.php");
                 exit();
             } else {
@@ -57,7 +59,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
+
+ob_end_flush(); // Flush output buffer after all code execution
 ?>
+
 
 <main class="px-5 py-12 sm:px-6 md:px-9 lg:px-16">
     <div class="flex flex-col items-center justify-center">

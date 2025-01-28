@@ -69,13 +69,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <main class="px-5 py-12 sm:px-6 md:px-9 lg:px-16">
     <div class="flex flex-col items-center justify-center">
-        <div class="flex justify-center items-center mb-3 bg-gray-900 border-gray-700 border rounded-lg sm:max-w-md w-full bg-gray-900">
+        <div class="flex justify-center items-center mb-3 bg-gray-950 border-gray-700 border rounded-lg sm:max-w-md w-full">
             <a href="#" class="flex items-center uppercase text-2xl font-semibold text-white">
                 <img class="w-16 h-16" src="./src/assets/favicon/logo.png" alt="logo">
                 <span>KalWi</span>
             </a>
         </div>
-        <div class="w-full bg-gray-800 rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-900 border-gray-700">
+        <div class="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-950 border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                 <h1 class="text-xl font-bold leading-tight tracking-tight text-white md:text-2xl">
                     Sign in to your account
@@ -86,16 +86,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <form class="space-y-4 md:space-y-6" method="POST" action="">
                     <div>
                         <label for="login_input" class="block mb-2 text-sm font-medium text-white">Your name or email</label>
-                        <input type="text" name="login_input" id="login_input" class="bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500" placeholder="name or email" required="">
+                        <input type="text" name="login_input" id="login_input" class="bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-0 block w-full p-2.5 placeholder-gray-400" placeholder="name or email" required="">
                     </div>
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-white">Password</label>
-                        <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-700 border border-gray-600 text-white rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500" required=""/>
+                        <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-0 block w-full p-2.5 placeholder-gray-400" required=""/>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="flex items-start">
                             <div class="flex items-center h-5">
-                                <input id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-600 rounded bg-gray-700 focus:ring-3 focus:ring-blue-300 focus:ring-blue-600 ring-offset-gray-800">
+                                <input id="remember" aria-describedby="remember" type="checkbox" class="w-4 h-4 border border-gray-600 rounded bg-gray-900 focus:ring-0 focus:outline-none">
                             </div>
                             <div class="ml-3 text-sm">
                                 <label for="remember" class="text-gray-300">Remember me</label>
