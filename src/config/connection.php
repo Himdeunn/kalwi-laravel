@@ -3,7 +3,7 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$dbname = "kasir";
+$dbname = "kalwi-laravel";
 
 // Melakukan koneksi ke database
 $conn = mysqli_connect($host, $username, $password, $dbname);

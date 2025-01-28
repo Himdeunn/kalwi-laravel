@@ -1,43 +1,81 @@
-<nav class="fixed w-full z-20 px-5 top-5">
-    <div class="max-w-full rounded-lg flex flex-wrap items-center justify-between mx-auto bg-gray-800 border border-gray-700 p-4">
-        <a href="https://flowbite.com/" class="flex items-center space-x-1 rtl:space-x-reverse"> 
-            <img src="./src/assets/favicon/logo.png" class="h-10" alt="">
-            <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">KalWi</span>
-        </a>
-        <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            <a href="" class="text-white hover:bg-gray-700 border border-gray-700 focus:ring-0 focus:outline-none font-medium rounded-full sm:rounded-lg text-sm lg:px-6 lg:py-3 px-4 py-2 text-center">Login</a>
-            <button data-collapse-toggle="navbar-sticky" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-full md:hidden border border-gray-700 focus:outline-none focus:ring-0 text-gray-400 hover:bg-gray-700" aria-controls="navbar-sticky" aria-expanded="false">
-                <span class="sr-only">Open main menu</span> <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
-                </svg>
-            </button>
-        </div>
-        <div class="items-center justify-between hidden md:flex md:w-auto md:order-1 w-full">
-            <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 bg-gray-800 border-gray-700">
-                <li>
-                    <a href="#" class="block hover:underline py-2 px-3 text-white" aria-current="page">Home</a>
-                </li>
-                <li>
-                    <a href="#" class="block hover:underline py-2 px-3 text-white">Product</a>
-                </li>
-                <li>
-                    <a href="#" class="block hover:underline py-2 px-3 text-white">Cart</a>
-                </li>
-            </ul>
+<nav class="sticky top-5 z-50 space-y-3 mx-2 lg:mx-5 md:mx-3 sm:mx-2">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 backdrop-blur-lg bg-opacity-50 p-2 rounded-xl bg-gray-950 border border-gray-700">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex-shrink-0">
+                <a href="/" class="text-2xl font-bold text-gray-300 hover:text-white">
+                    Kalwi
+                </a>
+            </div>
+
+            <div class="hidden md:flex space-x-6">
+                <a href="#features" class="text-gray-300 hover:text-white font-medium">Discord</a>
+                <a href="#store" class="text-gray-300 hover:text-white font-medium">
+                    Store
+                    <span class="bg-blue-500 text-white py-1 px-3 ml-1 rounded-full text-sm">
+                        30%
+                    </span>
+                </a>
+                <a href="#about" class="text-gray-300 hover:text-white font-medium">Guides</a>
+                <a href="#about" class="text-gray-300 hover:text-white font-medium">Support</a>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-4">
+                <a href="login.php" class="bg-gray-900 p-2 rounded-xl border-2 border-gray-700 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="h-6 w-6">
+                        <path fill="#ffffff" d="M320 32c0-9.9-4.5-19.2-12.3-25.2S289.8-1.4 280.2 1l-179.9 45C79 51.3 64 70.5 64 92.5L64 448l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 192 0 32 0 0-32 0-448zM256 256c0 17.7-10.7 32-24 32s-24-14.3-24-32s10.7-32 24-32s24 14.3 24 32zm96-128l96 0 0 352c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0 0-320c0-35.3-28.7-64-64-64l-96 0 0 64z" />
+                    </svg>
+                </a>
+            </div>
+
+            <div class="md:hidden flex items-center space-x-2">
+                <button
+                    id="menu-button"
+                    type="button"
+                    class="bg-gray-900 p-2 rounded-xl border-2 border-gray-700 shadow-sm"
+                    aria-controls="mobile-menu"
+                    aria-expanded="false">
+                    <!-- icon bars -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="h-6 w-6 text-gray-200">
+                        <path fill="#ffffff" d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
-    <!-- mobile -->
-    <div class="items-center justify-between hidden md:w-auto md:order-1 w-full" id="navbar-sticky">
-        <ul class="flex flex-col p-4 space-y-3 mt-4 font-medium rounded-lg bg-gray-800 border border-gray-700">
-            <li>
-                <a href="#" class="block py-3 px-5 text-white rounded-lg hover:bg-gray-700" aria-current="page">Home</a>
-            </li>
-            <li>
-                <a href="#" class="block py-3 px-5 text-white rounded-lg hover:bg-gray-700">Product</a>
-            </li>
-            <li>
-                <a href="#" class="block py-3 px-5 text-white rounded-lg hover:bg-gray-700">Cart</a>
-            </li>
-        </ul>
+
+    <div
+        id="mobile-menu"
+        class="hidden transform z-50 transition-all duration-500 ease-in-out backdrop-blur-lg bg-opacity-75 p-2 rounded-xl bg-gray-950 border border-gray-700">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="#discord" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
+                Discord
+            </a>
+            <a href="#store" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
+                Store
+                <span class="items-right bg-blue-500 text-white py-1 px-3 ml-1 rounded-full text-sm">
+                    30%
+                </span>
+            </a>
+            <a href="#guides" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
+                Guides
+            </a>
+            <a href="#support" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
+                Support
+            </a>
+            <a href="login.php" class="block hover:bg-gray-700 bg-gray-900 py-2 px-4 text-gray-300 hover:text-white rounded-xl border-2 border-gray-700 shadow-sm">
+                Login
+            </a>
+        </div>
     </div>
 </nav>
+
+<script>
+    const menuButton = document.getElementById('menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuButton.addEventListener('click', () => {
+        const isExpanded = menuButton.getAttribute('aria-expanded') === 'true';
+        menuButton.setAttribute('aria-expanded', !isExpanded);
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
