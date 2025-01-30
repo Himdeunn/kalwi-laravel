@@ -7,7 +7,6 @@ ob_start();
 
 include './src/layouts/header.php';
 include './src/layouts/footer.php';
-include './src/layouts/navbar.php';
 
 // Include database connection
 include './src/config/connection.php';

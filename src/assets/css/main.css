@@ -1,0 +1,18 @@
+.card {
+    background-color: rgba(31, 41, 55, 0.8); /* Sesuaikan warna dan transparansi */
+    border-radius: 0.75rem;
+    border: 3px solid #374151;
+    padding: 6rem 0; /* Sesuaikan padding sesuai kebutuhan */
+    max-width: 100vw;
+    backdrop-filter: blur(5px); /* Efek blur */
+}
+
+.blur {
+    background-color: rgba(31, 41, 55, 0.8); /* Sesuaikan warna dan transparansi */
+    backdrop-filter: blur(5px); /* Efek blur */
+}
+
+.card-sm {
+    backdrop-filter: blur(5px); /* Efek blur */
+    background-color: rgba(31, 41, 55, 0.8);
+}

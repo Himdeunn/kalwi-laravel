@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <title><?php echo $pageTitle; ?></title>
     <link rel="shortcut icon" href="./src/assets/favicon/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="./src/assets/css/main.css">
     <script src="https://kit.fontawesome.com/ec2a406e7a.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="./src/assets/js/global.js"></script>
     <style>
         @font-face {
             font-family: Epika;
@@ -16,4 +18,4 @@
     </style>
 </head>
 
-<body class="bg-[url('./src/assets/img/bg/bg-5.jpg')] bg-backdrop-blur bg-opacity-50 bg-cover bg-fixed bg-center">
+<body class="bg-[url('./src/assets/img/bg/bg-7.png')] bg-backdrop-blur bg-opacity-50 bg-cover bg-fixed bg-center">

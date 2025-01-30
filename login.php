@@ -4,71 +4,56 @@ $pageTitle = "Kalwi | Login";
 
 include './src/layouts/header.php';
 include './src/layouts/footer.php';
-include './src/layouts/navbar.php';
+
+ob_start();
 
 // Include database connection
 include './src/config/connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Ambil input dari form login
-    $input = $_POST['login_input'];  // bisa berupa email atau nama
+    $email = $_POST['email'];  
     $password = $_POST['password'];
 
-    // Periksa apakah input adalah email
-    if (filter_var($input, FILTER_VALIDATE_EMAIL)) {
-        // Jika email valid, cari berdasarkan email
-        $sql = "SELECT * FROM users WHERE email = ?";
-    } else {
-        // Jika input bukan email, cari berdasarkan nama (first_name atau last_name)
-        $sql = "SELECT * FROM users WHERE username = ?";
-    }
-
-    // Persiapkan query
+    // Query untuk mencari pengguna berdasarkan email
+    $sql = "SELECT * FROM users WHERE email = ?";
     $stmt = $conn->prepare($sql);
-
-    // Bind parameter berdasarkan tipe input
-    if (filter_var($input, FILTER_VALIDATE_EMAIL)) {
-        $stmt->bind_param("s", $input);  // Mengikat email ke query
-    } else {
-        $stmt->bind_param("s", $input);  
-    }
-
-    // Eksekusi query
+    $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Periksa apakah ada pengguna yang ditemukan
-    if ($result->num_rows > 0) {
+    if ($result->num_rows == 1) {
         $user = $result->fetch_assoc();
 
         // Verifikasi password
         if (password_verify($password, $user['password'])) {
-            // Password benar, set session
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_type'] = $user['type'];
+            // Set session
+            $_SESSION['userid'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['type'] = $user['type']; // Menyimpan tipe pengguna di sesi
 
-            // Redirect ke halaman yang sesuai berdasarkan type user
+            // Redirect berdasarkan tipe user
             if ($user['type'] == 3) {
-                header("Location: admin_dashboard.php");
+                header("Location: admindashboard.php"); // Halaman admin
             } else {
-                header("Location: user_dashboard.php");
+                header("Location: home.php"); // Halaman user biasa
             }
             exit();
         } else {
-            // Password salah
-            $error_message = "Invalid password.";
+            $error_message = "Invalid email or password.";
         }
     } else {
-        // Tidak ada pengguna ditemukan
-        $error_message = "User not found.";
+        $error_message = "Invalid email or password.";
     }
 
     $stmt->close();
 }
+
+ob_end_flush();
 ?>
 
 <main class="px-5 py-12 sm:px-6 md:px-9 lg:px-16">
-    <div class="flex flex-col items-center justify-center">
+    <div class="flex flex-col items-center justify-center mt-10">
         <div class="flex justify-center items-center mb-3 bg-gray-950 border-gray-700 border rounded-lg sm:max-w-md w-full">
             <a href="#" class="flex items-center uppercase text-2xl font-semibold text-white">
                 <img class="w-16 h-16" src="./src/assets/favicon/logo.png" alt="logo">
@@ -83,14 +68,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php if (isset($error_message)): ?>
                     <p class="text-red-500"><?php echo $error_message; ?></p>
                 <?php endif; ?>
-                <form class="space-y-4 md:space-y-6" method="POST" action="">
+                <form class="space-y-4 md:space-y-6" method="POST">
                     <div>
-                        <label for="login_input" class="block mb-2 text-sm font-medium text-white">Your name or email</label>
-                        <input type="text" name="login_input" id="login_input" class="bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-0 block w-full p-2.5 placeholder-gray-400" placeholder="name or email" required="">
+                        <label for="email" class="block mb-2 text-sm font-medium text-white">Email</label>
+                        <input type="email" name="email" id="email" class="bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-0 block w-full p-2.5 placeholder-gray-400" placeholder="Enter your email" required>
                     </div>
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-white">Password</label>
-                        <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-0 block w-full p-2.5 placeholder-gray-400" required=""/>
+                        <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-0 block w-full p-2.5 placeholder-gray-400" required>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="flex items-start">

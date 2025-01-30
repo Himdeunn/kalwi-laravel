@@ -7,7 +7,7 @@ $pageTitle = "Kalwi | Welcome";
 <?php
 include './src/layouts/header.php';
 include './src/layouts/footer.php';
-include './src/layouts/navbar.php';
+include './src/layouts/navbar_login.php';
 ?>
 
 <main class="px-5 py-14 sm:px-6 md:px-9 lg:px-16">
