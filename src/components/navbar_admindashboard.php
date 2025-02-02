@@ -16,7 +16,6 @@
                         30%
                     </span>
                 </a>
-                <a href="home.php" class="text-gray-300 hover:text-white font-medium">Profile</a>
                 <a id="dropdownHoverButton" data-dropdown-toggle="dropdownDesktop" data-dropdown-trigger="hover" class="cursor-pointer text-gray-300 hover:text-white font-medium">More</a>
             </div>
 
@@ -24,13 +23,13 @@
             <div id="dropdownDesktop" class="z-10 hidden divide-y divide-gray-700 border-gray-700 border rounded-lg shadow-sm w-44 bg-gray-900">
                 <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownHoverButton">
                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Product</a>
+                        <a href="product.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Product</a>
                     </li>
                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Categories</a>
+                        <a href="categories.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Categories</a>
                     </li>
                     <li>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Referral</a>
+                        <a href="referral.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Referral</a>
                     </li>
                 </ul>
             </div>
@@ -76,9 +75,6 @@
                     30%
                 </span>
             </a>
-            <a href="#" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
-                Profile
-            </a>
             <a id="dropdownHoverButton" data-dropdown-toggle="dropdownMobile" data-dropdown-trigger="hover" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
                 More
             </a>
@@ -92,13 +88,13 @@
     <div id="dropdownMobile" class="z-10 hidden divide-y divide-gray-700 border-gray-700 border rounded-lg shadow-sm w-full bg-gray-900">
         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownHoverButton">
             <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Product</a>
+                <a href="product.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Product</a>
             </li>
             <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Categories</a>
+                <a href="categories.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Categories</a>
             </li>
             <li>
-                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Referral</a>
+                <a href="referral.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Referral</a>
             </li>
         </ul>
     </div>

@@ -1,3 +1,27 @@
+<?php
+session_start();
+require './src/config/connection.php';
+
+// Pastikan pengguna sudah login
+if (!isset($_SESSION['userid'])) {
+    header("location: login.php");
+    exit();
+}
+
+$userid = $_SESSION['userid'];
+
+// Ambil tipe user dari database
+$stmt = $conn->prepare("SELECT type FROM users WHERE id = ?");
+$stmt->bind_param("i", $userid);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+
+// Tentukan tujuan dashboard berdasarkan tipe user
+$dashboardLink = ($user && $user['type'] == 3) ? "admindashboard.php" : "userdashboard.php";
+?>
+
 <nav class="sticky top-5 z-50 space-y-3 mx-2 lg:mx-5 md:mx-3 sm:mx-2">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 p-2 rounded-xl bg-gray-900 border border-gray-700">
         <div class="flex items-center justify-between h-16">
@@ -9,7 +33,7 @@
 
             <!-- nav -->
             <div class="hidden md:flex space-x-6">
-                <a href="dashboard.php" class="text-gray-300 hover:text-white font-medium">Dashboard</a>
+                <a href="<?= $dashboardLink; ?>" class="text-gray-300 hover:text-white font-medium">Dashboard</a>
                 <a href="store.php" class="text-gray-300 hover:text-white font-medium">
                     Store
                     <span class="bg-blue-500 text-white py-1 px-3 ml-1 rounded-full text-sm">
@@ -52,7 +76,7 @@
         id="mobile-menu"
         class="hidden transform z-50 transition-all duration-500 ease-in-out backdrop-blur-lg bg-opacity-75 p-2 rounded-xl bg-gray-900 border border-gray-700">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="dashboard.php" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
+            <a href="<?= $dashboardLink; ?>" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
                 Dashboard
             </a>
             <a href="store.php" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
