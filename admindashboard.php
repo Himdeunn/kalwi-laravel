@@ -13,26 +13,33 @@ $userid = $_SESSION['userid'];
 $success = false;
 $error = "";
 
-// Periksa apakah ada sesi sukses
+// 📌 Kode untuk memeriksa sesi sukses
 if (isset($_SESSION['success'])) {
     $success = $_SESSION['success'];
     unset($_SESSION['success']); // Hapus sesi setelah diakses
 }
 
-// Periksa apakah ada sesi error
+// 📌 Kode untuk memeriksa sesi eror
 if (isset($_SESSION['error'])) {
     $error = $_SESSION['error'];
     unset($_SESSION['error']); // Hapus sesi setelah diakses
 }
 
-// Ambil data user dari database
-$stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
+// 📌 Kode untuk mengambil data users
+$stmt = $conn->prepare("SELECT password, type FROM users WHERE id = ?");
 $stmt->bind_param("i", $userid);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $stmt->close();
 
+// 📌 Kode untuk memeriksa apakah user adalah tipe 3 (admin)
+if (!$user || $user['type'] != 3) {
+    header("location: home.php");
+    exit();
+}
+
+// 📌 Kode untuk mengirim data ke table users untuk kolom password
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $current_password = $_POST['current_password'];
     $new_password = $_POST['new_password'];
@@ -317,13 +324,17 @@ include_once './src/components/alertsUpdatePassword.php';
         <?php if ($success): ?>
             let successAlert = document.getElementById("success-alert");
             successAlert.classList.remove("hidden");
-            setTimeout(() => { successAlert.classList.add("hidden"); }, 3000);
+            setTimeout(() => {
+                successAlert.classList.add("hidden");
+            }, 3000);
         <?php endif; ?>
 
         <?php if (!empty($error)): ?>
             let errorAlert = document.getElementById("error-alert");
             errorAlert.classList.remove("hidden");
-            setTimeout(() => { errorAlert.classList.add("hidden"); }, 5000);
+            setTimeout(() => {
+                errorAlert.classList.add("hidden");
+            }, 5000);
         <?php endif; ?>
     });
 </script>
