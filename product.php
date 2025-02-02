@@ -48,43 +48,38 @@ $breadcrumbTrail = isset($breadcrumbs[$currentPage]) ? $breadcrumbs[$currentPage
 
 // 📌 Kode untuk mengirim data ke database
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    require './src/config/connection.php'; // Pastikan koneksi database ada
+    require './src/config/connection.php';
 
     $category_id = $_POST['category_id'];
     $name_product = $_POST['name_product'];
-    $price_product = $_POST['price_product'];
+    $real_price_product = $_POST['real_price_product'];
+    $discount_price_product = $_POST['discount_price_product'];
     $description_product = $_POST['description_product'];
 
-    // Upload File
     if (isset($_FILES['icon_product']) && $_FILES['icon_product']['error'] === 0) {
         $icon_name = basename($_FILES['icon_product']['name']);
         $icon_tmp = $_FILES['icon_product']['tmp_name'];
         $upload_dir = "./src/assets/storage/";
 
-        // Pastikan folder storage ada
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }
 
-        // Simpan hanya nama file, bukan path lengkap
         $icon_destination = $upload_dir . $icon_name;
-
-        // Validasi apakah file adalah gambar
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         $file_type = mime_content_type($icon_tmp);
 
         if (!in_array($file_type, $allowed_types)) {
-            echo "<script>alert('Invalid file type. Only JPG, PNG, GIF, and WEBP are allowed.'); window.history.back();</script>";
+            echo "<script>alert('Invalid file type.'); window.history.back();</script>";
             exit();
         }
 
         if (move_uploaded_file($icon_tmp, $icon_destination)) {
-            // Simpan hanya nama file di database
-            $sql = "INSERT INTO product (category_id, name_product, price_product, description_product, icon_product, created_at, update_at)
-                    VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
+            $sql = "INSERT INTO product (category_id, name_product, real_price_product, discount_price_product, description_product, icon_product, created_at, update_at)
+                    VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isdss", $category_id, $name_product, $price_product, $description_product, $icon_name);
+            $stmt->bind_param("isddss", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $icon_name);
 
             if ($stmt->execute()) {
                 echo "<script>alert('Product added successfully'); window.location.href='product.php';</script>";
@@ -92,12 +87,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo "<script>alert('Error adding product'); window.history.back();</script>";
             }
         } else {
-            echo "<script>alert('File upload for icon product failed'); window.history.back();</script>";
+            echo "<script>alert('File upload failed'); window.history.back();</script>";
         }
     } else {
         echo "<script>alert('No file uploaded'); window.history.back();</script>";
     }
 }
+
 
 
 
@@ -108,11 +104,17 @@ $row_product = mysqli_fetch_assoc($result_product);
 $total_product = $row_product['total_product'];
 
 
-// 📌 Ambil total price dari tabel product
-$query_price = "SELECT SUM(price_product) AS total_price FROM product";
-$result_price = mysqli_query($conn, $query_price);
-$row_price = mysqli_fetch_assoc($result_price);
-$total_price = $row_price['total_price'] ?? 0;
+// 📌 Ambil total real price dari tabel product
+$query_real_price = "SELECT SUM(real_price_product) AS total_real_price FROM product";
+$result_real_price = mysqli_query($conn, $query_real_price);
+$row_real_price = mysqli_fetch_assoc($result_real_price);
+$total_real_price = $row_real_price['total_real_price'] ?? 0;
+
+// 📌 Ambil total discount price dari tabel product
+$query_discount_price = "SELECT SUM(discount_price_product) AS total_discount_price FROM product";
+$result_discount_price = mysqli_query($conn, $query_discount_price);
+$row_discount_price = mysqli_fetch_assoc($result_discount_price);
+$total_discount_price = $row_discount_price['total_discount_price'] ?? 0;
 ?>
 
 <?php
@@ -203,10 +205,15 @@ include_once './src/components/navbar_admindashboard.php';
                                         <label for="name_product" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Product Name</label>
                                         <input type="text" id="name_product" name="name_product" required class="block w-full p-2 border border-gray-300 focus:outline-none focus:ring-0 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
                                     </div>
-                                    <!-- Price -->
+                                    <!-- Real Price -->
                                     <div>
-                                        <label for="price_product" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
-                                        <input type="number" id="price_product" name="price_product" required class="block w-full p-2 border border-gray-300 focus:outline-none focus:ring-0 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
+                                        <label for="real_price_product" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Real Price</label>
+                                        <input type="number" id="real_price_product" name="real_price_product" required class="block w-full p-2 border border-gray-300 focus:outline-none focus:ring-0 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
+                                    </div>
+                                    <!-- Discount Price -->
+                                    <div>
+                                        <label for="discount_price_product" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Discount Price</label>
+                                        <input type="number" id="discount_price_product" name="discount_price_product" required class="block w-full p-2 border border-gray-300 focus:outline-none focus:ring-0 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
                                     </div>
                                     <!-- Description -->
                                     <div>
@@ -252,22 +259,39 @@ include_once './src/components/navbar_admindashboard.php';
                                         </div>
                                     </div>
                                 </div>
-                                <h1 class="mt-4 text-5xl font-extrabold text-gray-100"><?php echo $total_product; ?></h1>
+                                <h1 class="mt-4 text-3xl font-extrabold text-gray-100"><?php echo $total_product; ?></h1>
                             </div>
                         </div>
 
-                        <!-- Card 3: Total Price -->
-                        <div class="w-full max-w-full mx-auto">
-                            <div class="p-4 rounded-lg shadow-lg border border-gray-700 bg-gray-800">
-                                <div class="flex items-center justify-between">
-                                    <h2 class="text-2xl font-bold text-gray-100">Total Price</h2>
-                                    <div class="flex justify-between items-center space-x-0.5">
-                                        <div class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
-                                            <i class="fa-solid fa-sack-dollar w-5 text-gray-900 ml-1"></i>
+                        <div class="grid gap-4 lg:grid-cols-2">
+                            <!-- Card 3: Total Real Price -->
+                            <div class="w-full max-w-full mx-auto">
+                                <div class="p-4 rounded-lg shadow-lg border border-gray-700 bg-gray-800">
+                                    <div class="flex items-center justify-between">
+                                        <h2 class="text-2xl font-bold text-gray-100">Total Real Price</h2>
+                                        <div class="flex justify-between items-center space-x-0.5">
+                                            <div class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                                                <i class="fa-solid fa-sack-dollar w-5 text-gray-900 ml-1"></i>
+                                            </div>
                                         </div>
                                     </div>
+                                    <h1 class="mt-4 text-3xl font-extrabold text-gray-100"><?php echo isset($total_real_price) ? "Rp. " . number_format($total_real_price, 0, ',', '.') : "Rp. 0"; ?></h1>
                                 </div>
-                                <h1 class="mt-4 text-5xl font-extrabold text-gray-100"><?php echo isset($total_price) ? "Rp. " . number_format($total_price, 0, ',', '.') : "Rp. 0"; ?></h1>
+                            </div>
+
+                            <!-- Card 4: Total Discount Price -->
+                            <div class="w-full max-w-full mx-auto">
+                                <div class="p-4 rounded-lg shadow-lg border border-gray-700 bg-gray-800">
+                                    <div class="flex items-center justify-between">
+                                        <h2 class="text-2xl font-bold text-gray-100">Total Discount Price</h2>
+                                        <div class="flex justify-between items-center space-x-0.5">
+                                            <div class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                                                <i class="fa-solid fa-sack-dollar w-5 text-gray-900 ml-1"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h1 class="mt-4 text-3xl font-extrabold text-gray-100"><?php echo isset($total_discount_price) ? "Rp. " . number_format($total_discount_price, 0, ',', '.') : "Rp. 0"; ?></h1>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -290,7 +314,7 @@ include_once './src/components/navbar_admindashboard.php';
                             <!-- Looping Produk -->
                             <?php
                             include "./src/config/connection.php";
-                            $sql = mysqli_query($conn, "SELECT id, category_id, name_product, price_product, description_product, icon_product, created_at FROM product");
+                            $sql = mysqli_query($conn, "SELECT id, category_id, name_product, real_price_product, discount_price_product, description_product, icon_product, created_at FROM product");
                             while ($data = mysqli_fetch_array($sql)) {
                                 $category_name = "Unknown";
                                 $category_id = $data['category_id'];
@@ -341,12 +365,15 @@ include_once './src/components/navbar_admindashboard.php';
                                             <hr class="h-px my-2 border-1 border-dashed bg-gray-700">
 
                                             <!-- Sub title bottom -->
-                                            <div class="flex items-center justify-between">
+                                            <div class="flex items-left flex-col">
                                                 <h2 class="text-md font-bold text-gray-100">
                                                     Category: <?= htmlspecialchars($category_name) ?>
                                                 </h2>
                                                 <h2 class="text-md font-bold text-gray-100">
-                                                    Rp. <?= number_format($data['price_product'], 0, ',', '.') ?>
+                                                    Real Price: <?php echo isset($data['real_price_product']) ? "Rp. " . number_format($data['real_price_product'], 0, ',', '.') : "Rp. 0"; ?>
+                                                </h2>
+                                                <h2 class="text-md font-bold text-gray-100">
+                                                    Discount Price: <?php echo isset($data['discount_price_product']) ? "Rp. " . number_format($data['discount_price_product'], 0, ',', '.') : "Rp. 0"; ?>
                                                 </h2>
                                             </div>
                                         </div>
@@ -358,8 +385,8 @@ include_once './src/components/navbar_admindashboard.php';
                         </div>
                     </div>
 
-                    <!-- Pagination -->
-                    <!-- <div class="flex justify-center space-x-4 mt-6">
+                    <!-- <!-- Pagination -->
+                    <div class="flex justify-center space-x-4 mt-6">
                         <?php if ($page > 1): ?>
                             <a href="?page=<?= $page - 1 ?>" class="px-10 py-3 text-gray-100 font-bold border border-gray-700 rounded-lg bg-gray-800 hover:bg-gray-600">
                                 Previous
@@ -371,7 +398,7 @@ include_once './src/components/navbar_admindashboard.php';
                                 Next
                             </a>
                         <?php endif; ?>
-                    </div> -->
+                    </div>
                 </div>
 
             </div>

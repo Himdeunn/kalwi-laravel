@@ -84,7 +84,8 @@ $category_name = $category ? $category['name_categories'] : "Kategori tidak dite
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $category_id    = $_POST['category_id'];
     $name_product   = $_POST['name_product'];
-    $price_product  = $_POST['price_product'];
+    $real_price_product  = $_POST['real_price_product'];
+    $discount_price_product  = $_POST['discount_price_product'];
     $description_product = $_POST['description_product'];
 
     // Jika ada file baru yang diunggah, proses upload file
@@ -96,18 +97,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (move_uploaded_file($icon_tmp, $icon_destination)) {
             // Simpan hanya nama file, bukan path lengkap
-            $updateQuery = "UPDATE product SET category_id = ?, name_product = ?, price_product = ?, description_product = ?, icon_product = ?, update_at = NOW() WHERE id = ?";
+            $updateQuery = "UPDATE product SET category_id = ?, name_product = ?, real_price_product = ?, discount_price_product = ?, description_product = ?, icon_product = ?, update_at = NOW() WHERE id = ?";
             $stmt = $conn->prepare($updateQuery);
-            $stmt->bind_param("isdsii", $category_id, $name_product, $price_product, $description_product, $icon_name, $product_id);
+            $stmt->bind_param("isddsii", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $icon_name, $product_id);
         } else {
             echo "<script>alert('File upload failed'); window.history.back();</script>";
             exit();
         }
     } else {
         // Jika tidak ada file baru, update field lainnya saja      
-        $updateQuery = "UPDATE product SET category_id = ?, name_product = ?, price_product = ?, description_product = ?, update_at = NOW() WHERE id = ?";
+        $updateQuery = "UPDATE product SET category_id = ?, name_product = ?, real_price_product = ?, discount_price_product = ?, description_product = ?, update_at = NOW() WHERE id = ?";
         $stmt = $conn->prepare($updateQuery);
-        $stmt->bind_param("isdsi", $category_id, $name_product, $price_product, $description_product, $product_id);
+        $stmt->bind_param("isddsi", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $product_id);
     }
 
     if ($stmt->execute()) {
@@ -203,10 +204,15 @@ include_once './src/components/navbar_admindashboard.php';
                                         <label for="name_product" class="block text-sm font-medium text-gray-300">Product Name</label>
                                         <input type="text" id="name_product" name="name_product" required value="<?= htmlspecialchars($product['name_product']) ?>" class="block w-full p-2 border border-gray-300 rounded-lg bg-gray-700 text-gray-300">
                                     </div>
-                                    <!-- Price -->
+                                    <!-- Real Price -->
                                     <div>
-                                        <label for="price_product" class="block text-sm font-medium text-gray-300">Price</label>
-                                        <input type="number" id="price_product" name="price_product" required value="<?= htmlspecialchars($product['price_product']) ?>" class="block w-full p-2 border border-gray-300 rounded-lg bg-gray-700 text-gray-300">
+                                        <label for="real_price_product" class="block text-sm font-medium text-gray-300">Real Price</label>
+                                        <input type="number" id="real_price_product" name="real_price_product" required value="<?= htmlspecialchars($product['real_price_product']) ?>" class="block w-full p-2 border border-gray-300 rounded-lg bg-gray-700 text-gray-300">
+                                    </div>
+                                    <!-- Discount Price -->
+                                    <div>
+                                        <label for="discount_price_product" class="block text-sm font-medium text-gray-300">Discount Price</label>
+                                        <input type="number" id="discount_price_product" name="discount_price_product" required value="<?= htmlspecialchars($product['discount_price_product']) ?>" class="block w-full p-2 border border-gray-300 rounded-lg bg-gray-700 text-gray-300">
                                     </div>
                                     <!-- Description -->
                                     <div>
@@ -266,7 +272,10 @@ include_once './src/components/navbar_admindashboard.php';
                                             Category: <?= htmlspecialchars($category_name) ?>
                                         </h2>
                                         <h2 class="text-md font-bold text-gray-100">
-                                            Rp. <?= number_format($product['price_product'], 0, ',', '.') ?>
+                                            Real Price: <?php echo isset($product['real_price_product']) ? "Rp. " . number_format($product['real_price_product'], 0, ',', '.') : "Rp. 0"; ?>
+                                        </h2>
+                                        <h2 class="text-md font-bold text-gray-100">
+                                            Discount Price: <?php echo isset($product['discount_price_product']) ? "Rp. " . number_format($product['discount_price_product'], 0, ',', '.') : "Rp. 0"; ?>
                                         </h2>
                                     </div>
                                 </div>
