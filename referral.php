@@ -323,10 +323,18 @@ include_once './src/components/navbar_admindashboard.php';
                                                 <h4 class="text-sm font-base text-gray-100">
                                                     Created By : <?= htmlspecialchars($row['username']) ?>
                                                 </h4>
-                                                <a href="edit_referral.php?id=<?= $row['id'] ?>"
-                                                    class="cursor-pointer flex items-center justify-center w-8 h-8 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
-                                                    <i class="fa-solid fa-pencil w-5 text-gray-900 ml-1"></i>
-                                                </a>
+                                                <div class="flex items-center justify-between space-x-2">
+                                                    <a href="edit_referral.php?id=<?= $row['id'] ?>"
+                                                        class="cursor-pointer flex items-center justify-center w-8 h-8 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                                                        <i class="fa-solid fa-pencil w-5 text-gray-900 ml-1"></i>
+                                                    </a>
+                                                    <!-- Button Delete Referral -->
+                                                    <a href="delete_referral.php?id=<?= $row['id'] ?>"
+                                                        onclick="return confirm('Are you sure you want to delete this referral?');"
+                                                        class="cursor-pointer flex items-center justify-center w-8 h-8 border border-red-500 rounded-full shadow-lg bg-gradient-to-l from-red-200 via-red-400 to-red-500 hover:bg-gradient-to-br">
+                                                        <i class="fa-solid fa-trash w-5 text-gray-900 ml-1.5"></i>
+                                                    </a>
+                                                </div>
                                             </div>
                                             <!-- Main title -->
                                             <div class="flex items-center justify-between">
