@@ -33,3 +33,72 @@
                         </div>
                     <?php endwhile; ?>
                 </div>
+
+
+
+                <!-- card 1 -->
+                <div class="card-sm rounded-xl bg-gray-800 bg-opacity-50 max-w-screen border-3 border-gray-700 rounded-[calc(var(--radius-lg)+1px)] lg:rounded-[calc(2rem+1px)] p-6">
+                    <!-- Table -->
+                    <div class="relative overflow-x-auto rounded-[calc(var(--radius-lg)+1px)] lg:rounded-[calc(1rem)] bg-gray-800">
+                        <table class="w-full text-sm text-left border-2 border-gray-700 text-gray-400">
+                            <thead class="text-xs uppercase bg-gray-700 text-gray-300">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Product Name</th>
+                                    <th scope="col" class="px-6 py-3">Category</th>
+                                    <th scope="col" class="px-6 py-3">Price</th>
+                                    <th scope="col" class="px-6 py-3">Description</th>
+                                    <th scope="col" class="px-6 py-3">Purchased By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($row = mysqli_fetch_assoc($result_products_table)): ?>
+                                    <tr class="bg-gray-800 border-b border-gray-700">
+                                        <th scope="row" class="px-6 py-4 font-medium text-white whitespace-nowrap">
+                                            <?php echo htmlspecialchars($row['name_product']); ?>
+                                        </th>
+                                        <td class="px-6 py-4">
+                                            <?php echo htmlspecialchars($row['category_name'] ?? 'No Category'); ?>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            $<?php echo number_format($row['price_product'], 2); ?>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <?php echo substr(htmlspecialchars($row['description_product']), 0, 5) . '...'; ?>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <?php echo $row['buyers'] ? htmlspecialchars($row['buyers']) : 'No Buyer'; ?>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="flex justify-center mt-4">
+                        <?php if ($total_pages_table > 1): ?>
+                            <nav class="inline-flex rounded-md shadow">
+                                <?php if ($page > 1): ?>
+                                    <a href="?page=<?php echo $page - 1; ?>"
+                                        class="px-4 py-2 bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600 rounded-l-md">
+                                        Previous
+                                    </a>
+                                <?php endif; ?>
+
+                                <?php for ($i = 1; $i <= $total_pages_table; $i++): ?>
+                                    <a href="?page=<?php echo $i; ?>"
+                                        class="px-4 py-2 <?php echo ($i == $page) ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'; ?> border border-gray-600">
+                                        <?php echo $i; ?>
+                                    </a>
+                                <?php endfor; ?>
+
+                                <?php if ($page < $total_pages_table): ?>
+                                    <a href="?page=<?php echo $page + 1; ?>"
+                                        class="px-4 py-2 bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600 rounded-r-md">
+                                        Next
+                                    </a>
+                                <?php endif; ?>
+                            </nav>
+                        <?php endif; ?>
+                    </div>
+                </div>
