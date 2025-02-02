@@ -1,3 +1,8 @@
+:root {
+    --primary-color: #279aff;
+    --secondary-color: #667e94;
+}
+
 .card {
     background-color: rgba(31, 41, 55, 0.8); /* Sesuaikan warna dan transparansi */
     border-radius: 0.75rem;
@@ -15,4 +20,12 @@
 .card-sm {
     backdrop-filter: blur(5px); /* Efek blur */
     background-color: rgba(31, 41, 55, 0.8);
+}
+
+.bg-primary {
+    background-color: var(--primary-color);
+}
+
+.bg-secondary {
+    background-color: var(--secondary-color);
 }

@@ -5,7 +5,22 @@ session_start();
 
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['userid'])) {
-    header("location:login.php");
+    header("location: login.php");
+    exit();
+}
+
+// Ambil tipe pengguna dari database
+$userid = $_SESSION['userid'];
+$stmt = $conn->prepare("SELECT type, username FROM users WHERE id = ?");
+$stmt->bind_param("i", $userid);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+
+// Periksa apakah pengguna memiliki tipe 3 (Admin)
+if (!$user || $user['type'] != 3) {
+    header("location: home.php");
     exit();
 }
 
@@ -33,6 +48,12 @@ $result_users = mysqli_query($conn, $query_users);
 $row_users = mysqli_fetch_assoc($result_users);
 $total_users = $row_users['total_users'];
 
+// 📌 Ambil total referal dari tabel code_referral
+$query_referral = "SELECT COUNT(id) AS total_referral FROM code_referral";
+$result_referral = mysqli_query($conn, $query_referral);
+$row_referral = mysqli_fetch_assoc($result_referral);
+$total_referral = $row_referral['total_referral'];
+
 // ==============================================
 // 📌 KODE TABLE PRODUCT (Dari Modal Product)
 // ==============================================
@@ -44,7 +65,6 @@ $limit = 5;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// 📌 Ambil produk dengan daftar pembeli + kategori
 $query_products_table = "
     SELECT product.*, 
            categories.name AS category_name, 
@@ -58,24 +78,40 @@ $query_products_table = "
 ";
 $result_products_table = mysqli_query($conn, $query_products_table);
 
-// 📌 Hitung total produk untuk pagination
 $total_query_products_table = "SELECT COUNT(DISTINCT id) AS total FROM product";
 $total_result_products_table = mysqli_query($conn, $total_query_products_table);
 $total_row_products_table = mysqli_fetch_assoc($total_result_products_table);
 $total_products_table = $total_row_products_table['total'];
 
-// 📌 Hitung total halaman
 $total_pages_table = ceil($total_products_table / $limit);
+
+// 📌 Kode untuk breadcrumb
+$currentPage = basename($_SERVER['PHP_SELF'], ".php");
+
+$breadcrumbs = [
+    "admindashboard" => ["Admin Dashboard" => "admindashboard.php"],
+    "referral" => ["Admin Dashboard" => "admindashboard.php", "Referral" => "referral.php"],
+    "product" => ["Admin Dashboard" => "admindashboard.php", "Product" => "product.php"],
+    "categories" => ["Admin Dashboard" => "admindashboard.php", "Categories" => "categories.php"],
+
+    // Edit pages
+    "edit_referral" => ["Admin Dashboard" => "admindashboard.php", "Referral" => "referral.php", "Edit Referral" => "#"],
+    "edit_product" => ["Admin Dashboard" => "admindashboard.php", "Product" => "product.php", "Edit Product" => "#"],
+    "edit_categories" => ["Admin Dashboard" => "admindashboard.php", "Categories" => "categories.php", "Edit Categories" => "#"],
+];
+
+$breadcrumbTrail = isset($breadcrumbs[$currentPage]) ? $breadcrumbs[$currentPage] : [];
+
 ?>
 
 
 <?php
 // layout dan komponen lainnya
-require_once './src/layouts/header.php';
-require_once './src/layouts/footer.php';
-require_once './src/components/navbar_admindashboard.php';
-require_once './src/components/modalAddProduct.php';
-require_once './src/components/modalAddCategories.php';
+include_once './src/layouts/header.php';
+include_once './src/layouts/footer.php';
+include_once './src/components/navbar_admindashboard.php';
+include_once './src/components/modalAddProduct.php';
+include_once './src/components/modalAddCategories.php';
 ?>
 
 <main class="px-5 py-14 sm:px-6 md:px-9 lg:px-10">
@@ -86,67 +122,109 @@ require_once './src/components/modalAddCategories.php';
         </h1>
 
         <div class="text-gray-200 max-w-1xl lg:max-w-screen space-y-5">
+            <!-- Breadcrumb -->
+            <nav class="flex px-10 py-5 text-gray-400 border border-gray-700 rounded-lg bg-gray-800" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                    <!-- Home -->
+                    <li class="inline-flex items-center">
+                        <a href="home.php" class="inline-flex items-center text-xl font-medium text-gray-400 hover:text-white">
+                            <svg class="w-4 h-4 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z" />
+                            </svg>
+                            Home
+                        </a>
+                    </li>
+
+                    <!-- Dynamic Breadcrumb -->
+                    <?php
+                    $totalItems = count($breadcrumbTrail);
+                    $counter = 0;
+
+                    foreach ($breadcrumbTrail as $name => $link):
+                        $counter++;
+                    ?>
+                        <li>
+                            <div class="flex items-center">
+                                <svg class="rtl:rotate-180 block w-4 h-4 mx-1 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
+                                </svg>
+                                <?php if ($counter < $totalItems): ?>
+                                    <a href="<?= htmlspecialchars($link) ?>" class="ms-1 text-xl font-medium text-gray-400 hover:text-white md:ms-2"><?= htmlspecialchars($name) ?></a>
+                                <?php else: ?>
+                                    <span class="ms-1 text-xl font-medium text-gray-500 md:ms-2"><?= htmlspecialchars($name) ?></span>
+                                <?php endif; ?>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            </nav>
+
             <!-- Grid untuk Card -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
                 <!-- Card 1: Total Produk Terjual -->
                 <div class="w-full max-w-full mx-auto">
-                    <div class="p-4 rounded-lg shadow-lg bg-gradient-to-r from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                    <div class="p-4 rounded-lg shadow-lg border border-gray-700 bg-gray-800">
                         <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-gray-900">Total User</h2>
-                            <button class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
-                                <i class="fa-solid fa-user w-5 text-gray-900"></i>
-                            </button>
-                        </div>
-                        <h1 class="mt-4 text-5xl font-extrabold text-gray-900"><?php echo $total_users; ?></h1>
-                    </div>
-                </div>
-
-                <!-- Card 2: Total Produk Terjual -->
-                <div class="w-full max-w-full mx-auto">
-                    <div class="p-4 rounded-lg shadow-lg bg-gradient-to-r from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-gray-900">Products Sold</h2>
+                            <h2 class="text-2xl font-bold text-gray-100">Products Sold</h2>
                             <button class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
                                 <i class="fa-solid fa-chart-line w-5 text-gray-900"></i>
                             </button>
                         </div>
-                        <h1 class="mt-4 text-5xl font-extrabold text-gray-900"><?php echo $total_sold; ?></h1>
+                        <h1 class="mt-4 text-5xl font-extrabold text-gray-100"><?php echo $total_sold; ?></h1>
+                    </div>
+                </div>
+
+                <!-- Card 2: Total Referral -->
+                <div class="w-full max-w-full mx-auto">
+                    <div class="p-4 rounded-lg shadow-lg border border-gray-700 bg-gray-800">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-2xl font-bold text-gray-100">Total Referal</h2>
+                            <div class="flex justify-between items-center space-x-0.5">
+                                <a href="referral.php" class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                                    <i class="fa-solid fa-arrow-up rotate-45 w-5 ml-1.5 mt-1 text-gray-900"></i>
+                                </a>
+                                <button class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                                    <i class="fa-solid fa-ticket w-5 text-gray-900"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <h1 class="mt-4 text-5xl font-extrabold text-gray-100"><?php echo $total_referral; ?></h1>
                     </div>
                 </div>
 
                 <!-- Card 3: Total Kategori -->
                 <div class="w-full max-w-full mx-auto">
-                    <div class="p-4 rounded-lg shadow-lg bg-gradient-to-r from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                    <div class="p-4 rounded-lg shadow-lg border border-gray-700 bg-gray-800">
                         <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-gray-900">Total Categories</h2>
+                            <h2 class="text-2xl font-bold text-gray-100">Total Categories</h2>
                             <div class="flex justify-between items-center space-x-0.5">
-                                <button data-modal-target="modalAddCategories" data-modal-toggle="modalAddCategories" class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
-                                    <i class="fa-solid fa-plus w-5 text-gray-900"></i>
-                                </button>
+                                <a href="categories.php" class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                                    <i class="fa-solid fa-arrow-up rotate-45 w-5 ml-1.5 mt-1 text-gray-900"></i>
+                                </a>
                                 <button class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
                                     <i class="fa-solid fa-layer-group w-5 text-gray-900"></i>
                                 </button>
                             </div>
                         </div>
-                        <h1 class="mt-4 text-5xl font-extrabold text-gray-900"><?php echo $total_categories; ?></h1>
+                        <h1 class="mt-4 text-5xl font-extrabold text-gray-100"><?php echo $total_categories; ?></h1>
                     </div>
                 </div>
 
                 <!-- Card 4: Total Produk -->
                 <div class="w-full max-w-full mx-auto">
-                    <div class="p-4 rounded-lg shadow-lg bg-gradient-to-r from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                    <div class="p-4 rounded-lg shadow-lg border border-gray-700 bg-gray-800">
                         <div class="flex items-center justify-between">
-                            <h2 class="text-2xl font-bold text-gray-900">Total Products</h2>
+                            <h2 class="text-2xl font-bold text-gray-100">Total Products</h2>
                             <div class="flex justify-between items-center space-x-0.5">
-                                <button data-modal-target="modalAddProduct" data-modal-toggle="modalAddProduct" class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
-                                    <i class="fa-solid fa-plus w-5 text-gray-900"></i>
-                                </button>
+                                <a href="product.php" class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                                    <i class="fa-solid fa-arrow-up rotate-45 w-5 ml-1.5 mt-1 text-gray-900"></i>
+                                </a>
                                 <button class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
                                     <i class="fa-solid fa-box w-5 text-gray-900"></i>
                                 </button>
                             </div>
                         </div>
-                        <h1 class="mt-4 text-5xl font-extrabold text-gray-900"><?php echo $total_products; ?></h1>
+                        <h1 class="mt-4 text-5xl font-extrabold text-gray-100"><?php echo $total_products; ?></h1>
                     </div>
                 </div>
             </div>
@@ -189,7 +267,7 @@ require_once './src/components/modalAddCategories.php';
                             </tbody>
                         </table>
                     </div>
-    
+
                     <!-- Pagination -->
                     <div class="flex justify-center mt-4">
                         <?php if ($total_pages_table > 1): ?>
@@ -200,14 +278,14 @@ require_once './src/components/modalAddCategories.php';
                                         Previous
                                     </a>
                                 <?php endif; ?>
-    
+
                                 <?php for ($i = 1; $i <= $total_pages_table; $i++): ?>
                                     <a href="?page=<?php echo $i; ?>"
                                         class="px-4 py-2 <?php echo ($i == $page) ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'; ?> border border-gray-600">
                                         <?php echo $i; ?>
                                     </a>
                                 <?php endfor; ?>
-    
+
                                 <?php if ($page < $total_pages_table): ?>
                                     <a href="?page=<?php echo $page + 1; ?>"
                                         class="px-4 py-2 bg-gray-700 text-gray-300 hover:bg-gray-600 border border-gray-600 rounded-r-md">
@@ -216,6 +294,20 @@ require_once './src/components/modalAddCategories.php';
                                 <?php endif; ?>
                             </nav>
                         <?php endif; ?>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2">
+                    <!-- Card 1: Total User -->
+                    <div class="w-full max-w-full mx-auto">
+                        <div class="p-4 rounded-lg shadow-lg border border-gray-700 bg-gray-800">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-2xl font-bold text-gray-100">Total User</h2>
+                                <button class="flex items-center justify-center w-10 h-10 border border-blue-500 rounded-full shadow-lg bg-gradient-to-l from-blue-200 via-blue-400 to-blue-500 hover:bg-gradient-to-br">
+                                    <i class="fa-solid fa-user w-5 text-gray-900"></i>
+                                </button>
+                            </div>
+                            <h1 class="mt-4 text-5xl font-extrabold text-gray-100"><?php echo $total_users; ?></h1>
+                        </div>
                     </div>
                 </div>
             </div>
