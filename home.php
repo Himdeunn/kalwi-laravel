@@ -28,7 +28,7 @@ require_once './src/components/alertsCopyToClipboard.php';
 
         <!-- card bento -->
         <div class="mt-10 grid gap-4 sm:mt-16 lg:grid-cols-3 lg:grid-rows-2">
-            <!-- left card -->
+            <!-- Official Store Card -->
             <div class="relative lg:row-span-2">
                 <div class="absolute inset-px blur rounded-lg lg:rounded-l-[2rem]"></div>
                 <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] lg:rounded-l-[calc(2rem+1px)]">
@@ -51,7 +51,7 @@ require_once './src/components/alertsCopyToClipboard.php';
                 <div class="pointer-events-none absolute inset-px rounded-lg ring-1 shadow-sm ring-black/20 lg:rounded-l-[2rem]"></div>
             </div>
 
-            <!-- middle top card -->
+            <!-- Performance Card -->
             <div class="relative max-lg:row-start-1">
                 <div class="absolute inset-px rounded-lg bg-gray-800 blur max-lg:rounded-t-[2rem]"></div>
                 <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-t-[calc(2rem+1px)]">
@@ -66,7 +66,7 @@ require_once './src/components/alertsCopyToClipboard.php';
                 <div class="pointer-events-none absolute inset-px rounded-lg ring-1 shadow-sm ring-black/20 max-lg:rounded-t-[2rem]"></div>
             </div>
 
-            <!-- middle bottom card -->
+            <!-- Security Card -->
             <div class="relative max-lg:row-start-3 lg:col-start-2 lg:row-start-2">
                 <div class="absolute inset-px rounded-lg blur bg-gray-800"></div>
                 <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)]">
@@ -81,7 +81,7 @@ require_once './src/components/alertsCopyToClipboard.php';
                 <div class="pointer-events-none absolute inset-px rounded-lg ring-1 shadow-sm ring-black/20"></div>
             </div>
 
-            <!-- middle right card -->
+            <!-- All Platform & Version Card -->
             <div class="relative lg:row-span-2">
                 <div class="absolute inset-px rounded-lg blur max-lg:rounded-b-[2rem] lg:rounded-r-[2rem]"></div>
                 <div class="relative flex h-full flex-col overflow-hidden rounded-[calc(var(--radius-lg)+1px)] max-lg:rounded-b-[calc(2rem+1px)] lg:rounded-r-[calc(2rem+1px)]">
@@ -100,7 +100,7 @@ require_once './src/components/alertsCopyToClipboard.php';
                     </div>
                     <div class="relative min-h-[30rem] w-full grow">
                         <div class="absolute top-10 right-0 bottom-0 left-10 overflow-hidden rounded-tl-xl bg-gray-800 shadow-2xl">
-                            <img class="h-full object-cover" src="https://cdn.discordapp.com/attachments/1311607381297467408/1332232098152448103/2024-07-17_18.20.55_2.png?ex=6799c753&is=679875d3&hm=ad2b9ce26fdbaf08c724b8af0f0aec4394856d6e70617182ee8bc905d0d83b6f&" alt="">
+                            <img class="h-full object-cover" src="./src/assets/img/prototype/allPlatformVersion.png" alt="">
                         </div>
                     </div>
                 </div>
@@ -110,6 +110,7 @@ require_once './src/components/alertsCopyToClipboard.php';
 
         <!-- testi section -->
         <div class="flex mt-32 flex-col space-y-10">
+            <!-- title -->
             <div class="space-y-5">
                 <h1 class="mx-auto mt-2 max-w-full text-center text-4xl font-semibold tracking-tight text-balance text-gray-200 sm:text-5xl">
                     Dipercaya para player minecraft di Indonesia
@@ -129,13 +130,15 @@ require_once './src/components/alertsCopyToClipboard.php';
                             <dd class="order-first text-3xl font-semibold tracking-tight text-white sm:text-5xl">1094+</dd>
                         </div>
                         <div class="mx-auto flex max-w-xs flex-col gap-y-4">
-                            <dt class="text-base/7 text-gray-300">New users annually</dt>
-                            <dd class="order-first text-3xl font-semibold tracking-tight text-white sm:text-5xl">46,000</dd>
+                            <dt class="text-base/7 text-gray-300">New users monthly</dt>
+                            <dd class="order-first text-3xl font-semibold tracking-tight text-white sm:text-5xl">175+</dd>
                         </div>
                     </dl>
                 </div>
             </div>
         </div>
+
+        
     </div>
 </main>
 
