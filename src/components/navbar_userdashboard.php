@@ -1,27 +1,3 @@
-<?php
-session_start();
-require './src/config/connection.php';
-
-// Pastikan pengguna sudah login
-if (!isset($_SESSION['userid'])) {
-    header("location: login.php");
-    exit();
-}
-
-$userid = $_SESSION['userid'];
-
-// Ambil tipe user dari database
-$stmt = $conn->prepare("SELECT type FROM users WHERE id = ?");
-$stmt->bind_param("i", $userid);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$stmt->close();
-
-// Tentukan tujuan dashboard berdasarkan tipe user
-$dashboardLink = ($user && $user['type'] == 3) ? "admindashboard.php" : "userdashboard.php";
-?>
-
 <nav class="sticky top-5 z-50 space-y-3 mx-2 lg:mx-5 md:mx-3 sm:mx-2">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 p-2 rounded-xl card-sm border border-gray-700">
         <div class="flex items-center justify-between h-16">
@@ -33,22 +9,33 @@ $dashboardLink = ($user && $user['type'] == 3) ? "admindashboard.php" : "userdas
 
             <!-- nav -->
             <div class="hidden md:flex space-x-6">
-                <a href="<?= $dashboardLink; ?>" class="text-gray-300 hover:text-white font-medium">Dashboard</a>
+                <a href="home.php" class="text-gray-300 hover:text-white font-medium">Home</a>
                 <a href="store.php" class="text-gray-300 hover:text-white font-medium">
                     Store
                     <span class="bg-blue-500 text-white py-1 px-3 ml-1 rounded-full text-sm">
                         30%
                     </span>
                 </a>
-                <a href="#" class="text-gray-300 hover:text-white font-medium">Guides</a>
-                <a href="#" class="text-gray-300 hover:text-white font-medium">Support</a>
+                <a id="dropdownHoverButton" data-dropdown-toggle="dropdownDesktop" data-dropdown-trigger="hover" class="cursor-pointer text-gray-300 hover:text-white font-medium">More</a>
+            </div>
+
+            <!-- Dropdown menu -->
+            <div id="dropdownDesktop" class="z-10 hidden divide-y divide-gray-700 border-gray-700 border rounded-lg shadow-sm w-44 card-sm">
+                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownHoverButton">
+                    <li>
+                        <a href="profile.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Profile</a>
+                    </li>
+                    <li>
+                        <a href="history.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">History</a>
+                    </li>
+                </ul>
             </div>
 
             <!-- Button -->
             <div class="flex items-center space-x-4">
-                <!-- Login button -->
+                <!-- logout button -->
                 <div class="hidden md:flex items-center">
-                    <a href="login.php" class="bg-gray-900 p-2 rounded-xl border-2 border-gray-700 shadow-sm">
+                    <a href="logout.php" class="bg-gray-900 p-2 rounded-xl border-2 border-gray-700 shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="h-6 w-6">
                             <path fill="#ffffff" d="M320 32c0-9.9-4.5-19.2-12.3-25.2S289.8-1.4 280.2 1l-179.9 45C79 51.3 64 70.5 64 92.5L64 448l-32 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 192 0 32 0 0-32 0-448zM256 256c0 17.7-10.7 32-24 32s-24-14.3-24-32s10.7-32 24-32s24 14.3 24 32zm96-128l96 0 0 352c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-32 0 0-320c0-35.3-28.7-64-64-64l-96 0 0 64z" />
                         </svg>
@@ -74,10 +61,10 @@ $dashboardLink = ($user && $user['type'] == 3) ? "admindashboard.php" : "userdas
 
     <div
         id="mobile-menu"
-        class="hidden transform z-50 transition-all duration-500 ease-in-out backdrop-blur-lg bg-opacity-75 p-2 rounded-xl bg-gray-900 border border-gray-700">
+        class="hidden transform z-50 transition-all duration-500 ease-in-out p-2 rounded-xl card-sm border border-gray-700">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <a href="<?= $dashboardLink; ?>" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
-                Dashboard
+            <a href="home.php" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
+                Home
             </a>
             <a href="store.php" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
                 Store
@@ -85,16 +72,25 @@ $dashboardLink = ($user && $user['type'] == 3) ? "admindashboard.php" : "userdas
                     30%
                 </span>
             </a>
-            <a href="#" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
-                Guides
+            <a id="dropdownHoverButton" data-dropdown-toggle="dropdownMobile" data-dropdown-trigger="hover" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
+                More
             </a>
-            <a href="#" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
-                Support
-            </a>
-            <a href="login.php" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
-                Login
+            <a href="logout.php" class="block hover:bg-gray-700 rounded-xl px-4 py-2 text-gray-300 hover:text-white font-medium">
+                Logout
             </a>
         </div>
+    </div>
+
+    <!-- Dropdown menu -->
+    <div id="dropdownMobile" class="z-10 hidden divide-y divide-gray-700 border-gray-700 border rounded-lg shadow-sm w-full card-sm">
+        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownHoverButton">
+            <li>
+                <a href="profile.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Profile</a>
+            </li>
+            <li>
+                <a href="history.php" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">History</a>
+            </li>
+        </ul>
     </div>
 </nav>
 

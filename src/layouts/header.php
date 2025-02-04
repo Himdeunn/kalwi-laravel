@@ -10,6 +10,7 @@
     <script src="https://kit.fontawesome.com/ec2a406e7a.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="./src/assets/js/global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <style>
         @font-face {
             font-family: Epika;

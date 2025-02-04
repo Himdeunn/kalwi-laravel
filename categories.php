@@ -86,7 +86,7 @@ $limit = 8; // Jumlah card per halaman
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-$sql = "SELECT c.name AS category_name, created_at
+$sql = "SELECT c.name AS category_name, created_at, id
         FROM categories c
         LIMIT $limit OFFSET $offset";
 
@@ -226,7 +226,7 @@ include_once './src/components/navbar_admindashboard.php';
                             <i class="fa-solid fa-arrow-down w-5 text-gray-100"></i>
                         </h1>
                     </div>
-                    
+
                     <!-- grid card -->
                     <div class="relative">
                         <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
@@ -245,6 +245,12 @@ include_once './src/components/navbar_admindashboard.php';
                                                         <?= htmlspecialchars($row['category_name']) ?>
                                                     </span>
                                                 </h1>
+                                                <!-- Button Delete -->
+                                                <a href="delete_categories.php?id=<?= $row['id'] ?>"
+                                                    onclick="return confirm('Are you sure you want to delete this product?');"
+                                                    class="cursor-pointer flex items-center justify-center w-8 h-8 border border-red-500 rounded-full shadow-lg bg-gradient-to-l from-red-200 via-red-400 to-red-500 hover:bg-gradient-to-br">
+                                                    <i class="fa-solid fa-trash w-5 text-gray-900 ml-1.5"></i>
+                                                </a>
                                             </div>
                                             <hr class="h-px my-2 border-1 border-dashed bg-gray-700">
                                             <!-- Additional Info -->

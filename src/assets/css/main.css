@@ -1,6 +1,7 @@
 :root {
     --primary-color: #279aff;
     --secondary-color: #667e94;
+    scroll-behavior: smooth;
 }
 
 .card {

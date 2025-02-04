@@ -22,7 +22,7 @@ $dashboardLink = ($user && $user['type'] == 3) ? "admindashboard.php" : "userdas
 ?>
 
 <nav class="sticky top-5 z-50 space-y-3 mx-2 lg:mx-5 md:mx-3 sm:mx-2">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 p-2 rounded-xl bg-gray-900 border border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 p-2 rounded-xl card-sm border border-gray-700">
         <div class="flex items-center justify-between h-16">
             <div class="flex-shrink-0">
                 <a href="home.php" class="text-2xl font-bold text-gray-300 hover:text-white">

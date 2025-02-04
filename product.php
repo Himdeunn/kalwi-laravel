@@ -55,6 +55,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $real_price_product = $_POST['real_price_product'];
     $discount_price_product = $_POST['discount_price_product'];
     $description_product = $_POST['description_product'];
+    $command_product = $_POST['command_product'];
+
+    // 🔹 Ambil slug dari categories berdasarkan category_id
+    $stmt = $conn->prepare("SELECT slug FROM categories WHERE id = ?");
+    $stmt->bind_param("i", $category_id);
+    $stmt->execute();
+    $stmt->bind_result($slug);
+    $stmt->fetch();
+    $stmt->close();
+
+    if (!$slug) {
+        echo "<script>alert('Invalid category ID'); window.history.back();</script>";
+        exit();
+    }
 
     if (isset($_FILES['icon_product']) && $_FILES['icon_product']['error'] === 0) {
         $icon_name = basename($_FILES['icon_product']['name']);
@@ -75,11 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if (move_uploaded_file($icon_tmp, $icon_destination)) {
-            $sql = "INSERT INTO product (category_id, name_product, real_price_product, discount_price_product, description_product, icon_product, created_at, update_at)
-                    VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            // 🔹 Tambahkan kolom 'filter' ke dalam query INSERT
+            $sql = "INSERT INTO product (category_id, name_product, real_price_product, discount_price_product, description_product, icon_product, command_product, filter, created_at, update_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("isddss", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $icon_name);
+            $stmt->bind_param("isddssss", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $icon_name, $command_product, $slug);
 
             if ($stmt->execute()) {
                 echo "<script>alert('Product added successfully'); window.location.href='product.php';</script>";
@@ -93,8 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<script>alert('No file uploaded'); window.history.back();</script>";
     }
 }
-
-
 
 
 // 📌 Ambil total product dari tabel product
@@ -215,6 +228,11 @@ include_once './src/components/navbar_admindashboard.php';
                                         <label for="discount_price_product" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Discount Price</label>
                                         <input type="number" id="discount_price_product" name="discount_price_product" required class="block w-full p-2 border border-gray-300 focus:outline-none focus:ring-0 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
                                     </div>
+                                    <!-- Command Product -->
+                                    <div>
+                                        <label for="command_product" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Command Product</label>
+                                        <input type="text" id="command_product" name="command_product" required class="block w-full p-2 border border-gray-300 focus:outline-none focus:ring-0 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
+                                    </div>
                                     <!-- Description -->
                                     <div>
                                         <label for="description_product" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Description</label>
@@ -314,7 +332,7 @@ include_once './src/components/navbar_admindashboard.php';
                             <!-- Looping Produk -->
                             <?php
                             include "./src/config/connection.php";
-                            $sql = mysqli_query($conn, "SELECT id, category_id, name_product, real_price_product, discount_price_product, description_product, icon_product, created_at FROM product");
+                            $sql = mysqli_query($conn, "SELECT id, category_id, name_product, real_price_product, discount_price_product, description_product, command_product, icon_product, created_at FROM product");
                             while ($data = mysqli_fetch_array($sql)) {
                                 $category_name = "Unknown";
                                 $category_id = $data['category_id'];
@@ -357,6 +375,9 @@ include_once './src/components/navbar_admindashboard.php';
                                                         <?= $data['name_product'] ?>
                                                     </span>
                                                 </div>
+                                                <h1 class="bg-gray-700 w-full px-5 font-mono text-center border-gray-600 border-2">
+                                                    <?= $data['command_product'] ?>
+                                                </h1>
                                                 <p class="text-md font-semibold text-gray-100">
                                                     <?= htmlspecialchars(mb_substr($data['description_product'], 0, 10)) . '...'; ?>
                                                 </p>
@@ -365,16 +386,18 @@ include_once './src/components/navbar_admindashboard.php';
                                             <hr class="h-px my-2 border-1 border-dashed bg-gray-700">
 
                                             <!-- Sub title bottom -->
-                                            <div class="flex items-left flex-col">
+                                            <div class="flex space-y-3 flex-col items-left">
                                                 <h2 class="text-md font-bold text-gray-100">
                                                     Category: <?= htmlspecialchars($category_name) ?>
                                                 </h2>
-                                                <h2 class="text-md font-bold text-gray-100">
-                                                    Real Price: <?php echo isset($data['real_price_product']) ? "Rp. " . number_format($data['real_price_product'], 0, ',', '.') : "Rp. 0"; ?>
-                                                </h2>
-                                                <h2 class="text-md font-bold text-gray-100">
-                                                    Discount Price: <?php echo isset($data['discount_price_product']) ? "Rp. " . number_format($data['discount_price_product'], 0, ',', '.') : "Rp. 0"; ?>
-                                                </h2>
+                                                <div class="flex items-center justify-between">
+                                                    <h2 class="text-md line-through font-bold text-red-500">
+                                                        <?php echo isset($data['real_price_product']) ? "Rp. " . number_format($data['real_price_product'], 0, ',', '.') : "Rp. 0"; ?>
+                                                    </h2>
+                                                    <h2 class="text-md font-bold text-gray-100">
+                                                        <?php echo isset($data['discount_price_product']) ? "Rp. " . number_format($data['discount_price_product'], 0, ',', '.') : "Rp. 0"; ?>
+                                                    </h2>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -87,6 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $real_price_product  = $_POST['real_price_product'];
     $discount_price_product  = $_POST['discount_price_product'];
     $description_product = $_POST['description_product'];
+    $command_product = $_POST['command_product'];
 
     // Jika ada file baru yang diunggah, proses upload file
     if (isset($_FILES['icon_product']) && $_FILES['icon_product']['error'] === 0) {
@@ -97,18 +98,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (move_uploaded_file($icon_tmp, $icon_destination)) {
             // Simpan hanya nama file, bukan path lengkap
-            $updateQuery = "UPDATE product SET category_id = ?, name_product = ?, real_price_product = ?, discount_price_product = ?, description_product = ?, icon_product = ?, update_at = NOW() WHERE id = ?";
+            $updateQuery = "UPDATE product SET category_id = ?, name_product = ?, real_price_product = ?, discount_price_product = ?, description_product = ?, icon_product = ?, command_product = ?, update_at = NOW() WHERE id = ?";
             $stmt = $conn->prepare($updateQuery);
-            $stmt->bind_param("isddsii", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $icon_name, $product_id);
+            $stmt->bind_param("isddssii", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $icon_name, $command_product, $product_id);
         } else {
             echo "<script>alert('File upload failed'); window.history.back();</script>";
             exit();
         }
     } else {
         // Jika tidak ada file baru, update field lainnya saja      
-        $updateQuery = "UPDATE product SET category_id = ?, name_product = ?, real_price_product = ?, discount_price_product = ?, description_product = ?, update_at = NOW() WHERE id = ?";
+        $updateQuery = "UPDATE product SET category_id = ?, name_product = ?, real_price_product = ?, discount_price_product = ?, description_product = ?, command_product = ?, update_at = NOW() WHERE id = ?";
         $stmt = $conn->prepare($updateQuery);
-        $stmt->bind_param("isddsi", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $product_id);
+        $stmt->bind_param("isddssi", $category_id, $name_product, $real_price_product, $discount_price_product, $description_product, $command_product, $product_id);
     }
 
     if ($stmt->execute()) {
@@ -214,6 +215,11 @@ include_once './src/components/navbar_admindashboard.php';
                                         <label for="discount_price_product" class="block text-sm font-medium text-gray-300">Discount Price</label>
                                         <input type="number" id="discount_price_product" name="discount_price_product" required value="<?= htmlspecialchars($product['discount_price_product']) ?>" class="block w-full p-2 border border-gray-300 rounded-lg bg-gray-700 text-gray-300">
                                     </div>
+                                    <!-- Command Product -->
+                                    <div>
+                                        <label for="command_product" class="block text-sm font-medium text-gray-300">Command Product</label>
+                                        <input type="text" id="command_product" name="command_product" required value="<?= htmlspecialchars($product['command_product']) ?>" class="block w-full p-2 border border-gray-300 rounded-lg bg-gray-700 text-gray-300">
+                                    </div>
                                     <!-- Description -->
                                     <div>
                                         <label for="description_product" class="block text-sm font-medium text-gray-300">Description</label>
@@ -259,6 +265,9 @@ include_once './src/components/navbar_admindashboard.php';
                                                 <?= $product['name_product'] ?>
                                             </span>
                                         </div>
+                                        <h1 class="bg-gray-700 w-full px-5 font-mono text-center border-gray-600 border-2">
+                                            <?= $product['command_product'] ?>
+                                        </h1>
                                         <p class="text-md font-semibold text-gray-100">
                                             <?= htmlspecialchars(mb_substr($product['description_product'], 0, 10)) . '...'; ?>
                                         </p>
@@ -267,16 +276,18 @@ include_once './src/components/navbar_admindashboard.php';
                                     <hr class="h-px my-2 border-1 border-dashed bg-gray-700">
 
                                     <!-- Sub title bottom -->
-                                    <div class="flex items-center justify-between">
+                                    <div class="flex space-y-3 flex-col items-left">
                                         <h2 class="text-md font-bold text-gray-100">
                                             Category: <?= htmlspecialchars($category_name) ?>
                                         </h2>
-                                        <h2 class="text-md font-bold text-gray-100">
-                                            Real Price: <?php echo isset($product['real_price_product']) ? "Rp. " . number_format($product['real_price_product'], 0, ',', '.') : "Rp. 0"; ?>
-                                        </h2>
-                                        <h2 class="text-md font-bold text-gray-100">
-                                            Discount Price: <?php echo isset($product['discount_price_product']) ? "Rp. " . number_format($product['discount_price_product'], 0, ',', '.') : "Rp. 0"; ?>
-                                        </h2>
+                                        <div class="flex items-center justify-between">
+                                            <h2 class="text-md line-through font-bold text-red-500">
+                                                <?php echo isset($product['real_price_product']) ? "Rp. " . number_format($product['real_price_product'], 0, ',', '.') : "Rp. 0"; ?>
+                                            </h2>
+                                            <h2 class="text-md font-bold text-gray-100">
+                                                <?php echo isset($product['discount_price_product']) ? "Rp. " . number_format($product['discount_price_product'], 0, ',', '.') : "Rp. 0"; ?>
+                                            </h2>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
